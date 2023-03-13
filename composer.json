@@ -1,0 +1,8 @@
+{
+    "nome":"rodriggodev/mvc",
+    "autoload": {
+        "psr-4": {
+            "App\\":"app/"
+        }
+    }
+}
