@@ -3,6 +3,7 @@
 namespace App\Http;
 
 class Response{
+
     /**
      * implementando o codigo do status http
      */
@@ -24,7 +25,6 @@ class Response{
      * Conteudo do response
      * @var mixed
      */
-
     private $content;
 
     /**
@@ -33,7 +33,6 @@ class Response{
      * @param mixed $content
      * @param string $contentType
      */
-
     public function __construct($httpCode, $content, $contentType = 'text/html'){
         $this-> httpCode = $httpCode;
         $this-> content = $content;
@@ -43,7 +42,7 @@ class Response{
 
     /**
      * metodo responsavel por alterar o content type do response
-     * @param string $content type
+     * @param string $contentType
       */
     public function setContentType($contentType){
         $this->contentType = $contentType;
@@ -58,4 +57,31 @@ class Response{
     public function addHeader($key, $value){
         $this->headers[$key] = $value;
     }
+
+    /**
+     * metodo responsavel por enviar os headers para o navegador
+    */
+    private function sendHeaders(){
+        //status
+        http_response_code($this->httpCode);
+        //enviar todos os headers
+        foreach($this->headers as $key=>$value){
+            header($key.': '.$value);
+        }
+    }
+
+    /**
+     *metodo responsavel por enviar a resposta para o usuario
+    */
+    public function  sendResponse( ){
+        //envia dos headers
+        $this->sendHeaders();
+        //imprime o conteudo
+        switch ($this->contentType) {
+            case 'text/html':
+                echo $this->content;
+                exit;
+        }
+    }
+
 }
