@@ -34,6 +34,24 @@ class Router{
     */
 	public function __construct($url){
 		$this->request = new Request();
-		$this->url = $url;
+	    $this->url = $url;
+        $this->setPrefix(); 
 	}
+
+    /**
+     * metodo responsavel por definir o prefixo das rotas 
+     */
+    private function setPrefix(){
+        //informações da url atual 
+        $parseUrl = parse_url($this->url);
+        //define o prefixo da url 
+        $this->prefix = $parseUrl['path'] ?? '';
+    }
+
+    /**
+     * 
+    */
+    public function get($routes, $params = []){
+
+    }
 }
