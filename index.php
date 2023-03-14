@@ -2,11 +2,14 @@
 
     require __DIR__.'/vendor/autoload.php';
 
+	use \App\Http\Router;
     use \App\Controller\Pages\Home;
-    $obResponse = new \App\Http\Response(404 ,'hello world');
 
-    $obResponse -> sendResponse();
+	$obRouter  = new router('');
 
+	echo "<pre>";
+	print_r($obRouter);
+	echo "</pre>";
 
-    exit;
+	exit;
     echo Home::getHome();
