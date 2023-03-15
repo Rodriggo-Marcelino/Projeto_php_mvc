@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use \Closure;
+
 class Router{
 
     /**
@@ -49,9 +51,40 @@ class Router{
     }
 
     /**
-     * 
-    */
-    public function get($routes, $params = []){
+     * Metodo responsavel por adicionar uma rota na classe
+     * @param string $method
+     * @param string $route
+     * @param array $params
+     */
+    private function addRoute($method, $route, $params = []){
+        // Validação dos parametros
+        foreach($params as $key=>$value){
+            if($value instanceof Closure){
+                $params['controller']= $value;
+                unset($params[$key]);
+                continue;
+            }
+        } 
 
+        $patternRoute = str_replace('/', '\/',$route);
+
+        echo "<pre>";
+        print_r($patternRoute);
+        echo "</pre>";
+        exit;
+
+        echo "<pre>";
+        print_r($params);
+        echo "</pre>";
+        exit;
+    }
+
+    /**
+     * Metodo responsavel por definir uma rota de get 
+     * @param string $route 
+     * @param array $params 
+    */
+    public function get($route, $params = []){
+        return $this->addRoute('GET', $route, $params);
     }
 }
