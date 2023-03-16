@@ -85,7 +85,7 @@ class Router{
 
     /**
      *Metodo responsavel por retornar a uri desconsiderando o prefixo
-     * @return String
+     * @return string
      */
     private function getUri(){
         //uri da request
