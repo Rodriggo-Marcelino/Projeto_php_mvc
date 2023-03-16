@@ -84,12 +84,39 @@ class Router{
     }
 
     /**
+     *Metodo responsavel por retornar a uri desconsiderando o prefixo
+     * @return String
+     */
+    private function getUri(){
+        //uri da request
+        $uri = $this->request->getUri();
+        echo "<pre>";
+        print_r($uri);
+        echo "</pre>";
+        exit;
+    }
+
+    /**
+     * Metodo responsavel por retornar os dados da rota atual
+     * @return array
+     */
+    private function getRoute(){
+        //uri
+        $uri = $this->getUri();
+    }
+
+    /**
      * metodo responsavel por executar a rota atual
      * @return Response
     */
     public function run(){
         try{
-            throw new Exception("pagina não encontrada", 404);
+            //obtem a rota atual
+            $route = $this -> getRoute();
+            echo "<pre>";
+            print_r($route);
+            echo "</pre>";
+            exit;
         }catch(Exception $e){
             return new Response($e -> getCode(), $e -> getMessage());
         }
