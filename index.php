@@ -17,5 +17,8 @@
 		}
 	]);
 
-	
+	//imprime o response da rota
+	$obRouter->run()
+			->sendResponse();
+
 	
