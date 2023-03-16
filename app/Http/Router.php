@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use \Closure;
+use \Exception;
 
 class Router{
 
@@ -66,17 +67,11 @@ class Router{
             }
         } 
 
-        $patternRoute = str_replace('/', '\/',$route);
+        //padrão de validação da url
+        $patternRoute = '/^'.str_replace('/', '\/',$route).'$/';
 
-        echo "<pre>";
-        print_r($patternRoute);
-        echo "</pre>";
-        exit;
-
-        echo "<pre>";
-        print_r($params);
-        echo "</pre>";
-        exit;
+        //adiciona a rota dentro da classe
+        $this -> routes [$patternRoute][$method] = [$params];
     }
 
     /**
@@ -85,6 +80,18 @@ class Router{
      * @param array $params 
     */
     public function get($route, $params = []){
-        return $this->addRoute('GET', $route, $params);
+        return $this -> addRoute('GET', $route, $params);
+    }
+
+    /**
+     * metodo responsavel por executar a rota atual
+     * @return Response
+    */
+    public function run(){
+        try{
+            throw new Exception("pagina não encontrada", 404);
+        }catch(Exception $e){
+            return new Response($e -> getCode(), $e -> getMessage());
+        }
     }
 }
