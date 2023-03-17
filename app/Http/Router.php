@@ -71,7 +71,7 @@ class Router{
         $patternRoute = '/^'.str_replace('/', '\/',$route).'$/';
 
         //adiciona a rota dentro da classe
-        $this -> routes [$patternRoute][$method] = [$params];
+        $this -> routes [$patternRoute][$method] = $params;
     }
 
     /**
@@ -84,16 +84,45 @@ class Router{
     }
 
     /**
+     * Metodo responsavel por definir uma rota de post 
+     * @param string $route 
+     * @param array $params 
+    */
+    public function post($route, $params = []){
+        return $this -> addRoute('POST', $route, $params);
+    }
+
+    /**
+     * Metodo responsavel por definir uma rota de put 
+     * @param string $route 
+     * @param array $params 
+    */
+    public function put($route, $params = []){
+        return $this -> addRoute('PUT', $route, $params);
+    }
+
+    /**
+     * Metodo responsavel por definir uma rota de delete 
+     * @param string $route 
+     * @param array $params 
+    */
+    public function delete($route, $params = []){
+        return $this -> addRoute('DELETE', $route, $params);
+    }
+
+    /**
      *Metodo responsavel por retornar a uri desconsiderando o prefixo
      * @return string
      */
     private function getUri(){
         //uri da request
         $uri = $this->request->getUri();
-        echo "<pre>";
-        print_r($uri);
-        echo "</pre>";
-        exit;
+
+        // fatia a uri com o prefixo
+        $xUri = strlen($this->prefix) ? explode($this->prefix,$uri) : [$uri];
+
+        //RETORNA A URI SEM PREFIXO
+        return end($xUri);
     }
 
     /**
@@ -103,6 +132,26 @@ class Router{
     private function getRoute(){
         //uri
         $uri = $this->getUri();
+
+        //method
+        $httpMethod = $this -> request -> getHttpMethod();
+
+        //valida as rotas
+        foreach($this->routes as $patternRoute=>$methods){
+            //verifica se a uri bate o padrão
+            if(preg_match($patternRoute,$uri)){
+                //verifica o metodo
+                if($methods[$httpMethod]){
+                    //retorno dos parametros da rota
+                    return $methods[$httpMethod];
+                }
+                //metodo não permitido
+                throw new Exception("Metodo não é permitido", 405);
+            }
+        }
+        //url não encontrada
+        throw new Exception("URL NÃO ENCONTRADA", 404);
+
     }
 
     /**
@@ -113,10 +162,18 @@ class Router{
         try{
             //obtem a rota atual
             $route = $this -> getRoute();
-            echo "<pre>";
-            print_r($route);
-            echo "</pre>";
-            exit;
+
+            //verifica controlador
+            if(!isset($route['controller'])){
+                throw new Exception("A url não pode ser processada",500);
+            }
+
+            //ARGUMENTOS DA FUNÇÃO 
+            $args = [];
+
+            //RETORNA A EXECUÇÃO DA FUNÇÃO
+            return call_user_func_array($route['controller'], $args);
+
         }catch(Exception $e){
             return new Response($e -> getCode(), $e -> getMessage());
         }
