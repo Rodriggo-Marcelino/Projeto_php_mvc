@@ -2,6 +2,21 @@
 
 namespace App\Utils;
 class View{ 
+
+    /**
+     * variaveis padrão da view
+     * @var array
+     */
+    private static $vars = [];
+
+    /**
+     * metodo responsavel por definir os dados adicionais da rota 
+     * @param array $vars
+    */
+    public static function init($vars =[]){
+        self::$vars = $vars;
+    }
+
     /**
      * Método responsavel por retornar o conteudo de uma view
      * @param string $view
@@ -20,6 +35,9 @@ class View{
     public static function render($view, $vars = []){
         //conteudo da view
         $contentView = self::getContentView($view);
+
+        // merge de variaveis da view
+        $vars = array_merge(self::$vars,$vars);
 
         //CHAVES DOS ARRAYS DE VARIAVEIS
         $keys = array_keys($vars);

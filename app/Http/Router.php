@@ -61,15 +61,28 @@ class Router{
         // Validação dos parametros
         foreach($params as $key=>$value){
             if($value instanceof Closure){
-                $params['controller']= $value;
+                $params['controller'] = $value;
                 unset($params[$key]);
                 continue;
             }
         } 
 
+        //variaveis da rota 
+        $params['variables'] = [];
+
+        //padrão de validação das variaveis das rotas
+        $patternVariable  = '/{(.*?)}/';
+        if(preg_match_all($patternVariable,$route,$matches)){
+           $route = preg_replace($patternVariable,'(.*?)',$route);
+           $params['variables'] = $matches[1];
+        }
+
         //padrão de validação da url
         $patternRoute = '/^'.str_replace('/', '\/',$route).'$/';
-
+        echo "<pre>";
+        print_r($patternRoute);
+        echo"</pre>";
+        
         //adiciona a rota dentro da classe
         $this -> routes [$patternRoute][$method] = $params;
     }
