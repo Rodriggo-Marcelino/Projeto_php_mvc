@@ -4,6 +4,7 @@ namespace App\Http;
 
 use \Closure;
 use \Exception;
+use \ReflectionFunction;
 
 class Router{
 
@@ -79,9 +80,6 @@ class Router{
 
         //padrão de validação da url
         $patternRoute = '/^'.str_replace('/', '\/',$route).'$/';
-        echo "<pre>";
-        print_r($patternRoute);
-        echo"</pre>";
         
         //adiciona a rota dentro da classe
         $this -> routes [$patternRoute][$method] = $params;
@@ -152,9 +150,17 @@ class Router{
         //valida as rotas
         foreach($this->routes as $patternRoute=>$methods){
             //verifica se a uri bate o padrão
-            if(preg_match($patternRoute,$uri)){
+            if(preg_match($patternRoute,$uri,$matches)){
                 //verifica o metodo
-                if($methods[$httpMethod]){
+                if(isset($methods[$httpMethod])){
+                    //remove a primeria posição 
+                    unset($matches[0]);
+                    
+                    //variaveis processadas
+                    $keys = $methods[$httpMethod]['variables'];
+                    $methods[$httpMethod]['variables'] = array_combine($keys,$matches);
+                    $methods[$httpMethod]['variables']['request'] = $this->request;
+
                     //retorno dos parametros da rota
                     return $methods[$httpMethod];
                 }
@@ -175,7 +181,7 @@ class Router{
         try{
             //obtem a rota atual
             $route = $this -> getRoute();
-
+            
             //verifica controlador
             if(!isset($route['controller'])){
                 throw new Exception("A url não pode ser processada",500);
@@ -184,6 +190,15 @@ class Router{
             //ARGUMENTOS DA FUNÇÃO 
             $args = [];
 
+            //REFLECTION 
+
+            $reflection = new ReflectionFunction($route['controller']);
+            foreach($reflection->getParameters() as $parameter){
+                $name = $parameter->getName();
+                $args[$name] = $route['variables'][$name] ?? '';
+            
+            }
+            
             //RETORNA A EXECUÇÃO DA FUNÇÃO
             return call_user_func_array($route['controller'], $args);
 
