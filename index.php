@@ -4,9 +4,13 @@
 
 	use \App\Http\Router;
 	use \App\Utils\View;
-    
+    use \WilliamCosta\DotEnv\Environment;
 
-	define('URL','http://localhost:8000/mvc');
+	//carrega variaveis de ambiente
+	Environment::load(__DIR__);
+
+	//DEFINE A CONSTANTE DE URL DO PROJETO
+	define('URL',getenv('URL'));
 
 	//DEFINE O VALOR PADRÃO DAS VARIAVEIS  
 	View::init([
