@@ -2,7 +2,7 @@
 namespace App\Controller\Pages;
 
 use \App\Utils\View;
-
+use \App\Model\Entity\Testimony as EntityTestimony;
 
 class Testimony extends Page{
     /** 
@@ -19,5 +19,21 @@ class Testimony extends Page{
          
          //retorna a view da pagina
          return parent ::getPage('DEPOIMENTOS > Rodrigo', $content);
+    }
+
+    /**
+     * Metodo responsavel por cadastrar um depoimento 
+     * @param  Request $request
+     * @return string 
+     */
+    public static function insertTestimony($request){
+        //dados do post
+        $postVars = $request -> getPostVars();
+        //nova instancia 
+        $obTestimony = new EntityTestimony;
+        $obTestimony->nome = $postVars['nome'];
+        $obTestimony->mensagem = $postVars['mensagem'];
+        $obTestimony->cadastrar();
+        return self::getTestimonies();
     }
 }
