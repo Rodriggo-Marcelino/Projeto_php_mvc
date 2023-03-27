@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Model\Entity;
+use WilliamCosta\DatabaseManager\Database;
 
 class Testimony{
     /**
@@ -32,6 +33,15 @@ class Testimony{
      * @return boolean
      */
     public function cadastrar(){
+        //define a data
+        $this->date = date('Y-m-d H:i:s');
+
+        //insere o depoimento no banco de dados
+        $this->id = (new Database('depoimentos')) -> insert([
+            'nome' => $this->nome,
+            'mensagem' => $this->mensagem,
+            'data' => $this->date
+        ]);
         echo "<pre>";
         print_r($this);
         echo "</pre>"; exit;
